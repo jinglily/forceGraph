@@ -15,6 +15,8 @@ import d3 from '../static/d3.v3.min.js';
 var data = {
   msg: 'Hello World'
 };
+
+//拖拽
 var mousePosition = data.translate = {
   flag :false,
   x:0,
@@ -37,11 +39,14 @@ var event = {
     mousePosition.flag = false;
   }
 }
-var d = [];
+
+//基础数据
 data.forceData = {"links":[{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#13812345678","1#15812345678"],"source":0,"target":1},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#13812345678","7#777"],"source":0,"target":3},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#15812345678","1#13812345678"],"source":1,"target":0},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#15812345678","100#usertaobao"],"source":1,"target":2},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#15812345678","8#56789"],"source":1,"target":4},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["8#56789","1#15212345678"],"source":4,"target":5},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#15212345678","1#15812345678"],"source":5,"target":6},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#15212345678","101#userjd"],"source":5,"target":7},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#15812345678","1#13812345678"],"source":6,"target":8},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#15812345678","100#usertaobao"],"source":6,"target":9},{"selected":false,"sizeFlag":{"pt":true,"selected":false,"hover":false},"previouslySelected":false,"_key":["1#15812345678","8#56789"],"source":6,"target":10}],"nodes":[{"fixed":false,"index":0,"selected":false,"x":0,"y":0,"type":"1","sizeFlag":{"pt":true,"query":true,"selected":false,"hover":false},"weight":3,"name":"13812345678","previouslySelected":false,"_key":"1#13812345678"},{"fixed":false,"index":1,"selected":true,"x":0,"y":0,"type":"1","sizeFlag":{"pt":true,"query":true,"selected":true,"hover":true},"weight":4,"name":"15812345678","previouslySelected":true,"_key":"1#15812345678"},{"fixed":false,"index":2,"selected":false,"x":0,"y":0,"type":"100","sizeFlag":{"pt":true,"query":false,"selected":false,"hover":false},"weight":1,"name":"usertaobao","previouslySelected":false,"_key":"100#usertaobao"},{"fixed":false,"index":3,"selected":false,"x":0,"y":0,"type":"7","sizeFlag":{"pt":true,"query":false,"selected":false,"hover":false},"weight":1,"name":"777","previouslySelected":false,"_key":"7#777"},{"fixed":false,"index":4,"selected":false,"x":0,"y":0,"type":"8","sizeFlag":{"pt":true,"query":false,"selected":false,"hover":false},"weight":2,"name":"56789","previouslySelected":false,"_key":"8#56789"},{"fixed":false,"index":5,"selected":false,"x":0,"y":0,"type":"1","sizeFlag":{"pt":true,"query":false,"selected":false,"hover":false},"weight":3,"name":"15212345678","previouslySelected":false,"_key":"1#15212345678"},{"fixed":false,"index":6,"selected":false,"x":0,"y":0,"type":"1","sizeFlag":{"pt":true,"query":true,"selected":false,"hover":false},"weight":4,"name":"15812345678","previouslySelected":false,"_key":"1#15812345678"},{"fixed":false,"index":7,"selected":false,"x":0,"y":0,"type":"101","sizeFlag":{"pt":true,"query":false,"selected":false,"hover":false},"weight":1,"name":"userjd","previouslySelected":false,"_key":"101#userjd"},{"fixed":false,"index":8,"selected":false,"x":0,"y":0,"type":"1","sizeFlag":{"pt":true,"query":true,"selected":false,"hover":false},"weight":1,"name":"13812345678","previouslySelected":false,"_key":"1#13812345678"},{"fixed":false,"index":9,"selected":false,"x":0,"y":0,"type":"100","sizeFlag":{"pt":true,"query":false,"selected":false,"hover":false},"weight":1,"name":"usertaobao","previouslySelected":false,"_key":"100#usertaobao"},{"fixed":false,"index":10,"selected":false,"x":0,"y":0,"type":"8","sizeFlag":{"pt":true,"query":false,"selected":false,"hover":false},"weight":1,"name":"56789","previouslySelected":false,"_key":"8#56789"}]};
 
+//copy 50 份数据
+var d = [];
 var dd = {links:[], nodes:[]}
-for(var i = 0; i<20;i++){
+for(var i = 0; i<50;i++){
   d.push(JSON.parse(JSON.stringify(data.forceData)));
   d[i].links.forEach(function(v, index, origin){
     v.source = d[i].nodes[v.source];
@@ -50,6 +55,8 @@ for(var i = 0; i<20;i++){
   dd.links = dd.links.concat(d[i].links)
   dd.nodes = dd.nodes.concat(d[i].nodes)
 }
+
+//给数据创建初始位置
 var w = 300;
 var h = 300;
 var n = 30;
@@ -62,9 +69,13 @@ for(var i in dd.nodes){
   dd.nodes[i].x = getRandom(c*w, (c+1)*w);
   dd.nodes[i].y = getRandom(s*h, (s+1)*h);
 }
-console.log(dd);
+function getRandom(a, z){
+  return Math.floor(Math.random()*(a==0?z:(a+(z-a))))
+}
+
 data.forceData = dd;
 
+//使用d3js的force功能
 var force = d3.layout.force()
       .charge(-100)
       .gravity(0.08)
@@ -77,9 +88,6 @@ var force = d3.layout.force()
       .size([1000, 500]);
 force.start();
 
-function getRandom(a, z){
-  return Math.floor(Math.random()*(a==0?z:(a+(z-a))))
-}
 export default {
   name: 'app',
   data () {
